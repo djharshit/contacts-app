@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request, redirect, jsonify
 import sqlite3
+from datetime import datetime
 
 class Contacts:
     def __init__(self):
@@ -73,6 +74,35 @@ def update_data(name):
         obj.close_connection()
 
         return redirect('/')
+
+@app.route('/api')
+def func_name():
+    name = request.args.get('name', default=None, type=str)
+    obj = Contacts()
+
+    if name == 'all':
+        all_data = obj.get_all_data()
+        result = {}
+        result['All'] = []
+        for name, number in all_data:
+            result['All'].append({'Name': name, 'Number': number, 'Date': datetime.now()})
+
+    elif (name is None) or (obj.get_data_from_name(name) is None):
+        result = {
+        'Name': 'Not Found',
+        'Date': datetime.now()
+        }
+
+    else:
+        number = obj.get_data_from_name(name)[0]
+        result = {
+        'Name': name,
+        'Number': number,
+        'Date': datetime.now()
+        }
+    
+    obj.close_connection()    
+    return jsonify(result)
 
 
 if __name__ == '__main__':
