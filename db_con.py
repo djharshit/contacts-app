@@ -5,6 +5,7 @@ from datetime import date
 from dotenv import load_dotenv
 from os import environ
 from sqlalchemy import create_engine, exc, text
+import sys
 
 # Importing all environment variables
 # Windows: FOR /F "eol=# tokens=*" %i IN (.env) DO SET %i
@@ -18,7 +19,7 @@ if "HOST" in environ:
     print("[+] All ENVs are loaded")
 else:
     print("[+] ENVs are not loaded")
-    exit()
+    sys.exit()
 
 host = environ.get("HOST", "")
 user = environ.get("USER", "")
