@@ -43,7 +43,7 @@ def login_page():
 
         return render_template("login.html", login_error="")
 
-    elif request.method == "POST":
+    if request.method == "POST":
         user_email = request.form.get("email")
         user_password = request.form.get("password")
 
@@ -86,7 +86,7 @@ def signup_page():
 
         return render_template("signup.html", signup_error="")
 
-    elif request.method == "POST":
+    if request.method == "POST":
         user_name = request.form.get("name")
         user_email = request.form.get("email")
         user_password = request.form.get("password")
@@ -120,7 +120,7 @@ def contacts_page():
         all_contacts = DB_CON.get_all_contacts_of_user(user_unique_id)
         return render_template("contacts.html", user_name=user_name, all_contacts=all_contacts)
 
-    elif request.method == "POST":
+    if request.method == "POST":
         contact_name = request.form.get("name")
         contact_number = request.form.get("number")
 
@@ -161,7 +161,7 @@ def update_contact_of_user():
             contact_number=contact_number,
         )
 
-    elif request.method == "POST":
+    if request.method == "POST":
         contact_id = request.form.get("contact_id", "")
         new_contact_name = request.form.get("contact_name", "")
         new_contact_number = int(request.form.get("contact_number", "0"))
