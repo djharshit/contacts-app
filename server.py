@@ -48,7 +48,9 @@ def login_page():
         user_password = request.form.get("password")
 
         if user_email == "" or user_password == "":
-            return render_template("login.html", login_error="User email or password cannot be empty")
+            return render_template(
+                "login.html", login_error="User email or password cannot be empty"
+            )
 
         login_cred = DB_CON.user_login_with_user_email(user_email, user_password)  # type: ignore
 
@@ -92,7 +94,9 @@ def signup_page():
         user_password = request.form.get("password")
 
         if user_email == "" or user_password == "":
-            return render_template("signup.html", signup_error="Email or password cannot be empty")
+            return render_template(
+                "signup.html", signup_error="Email or password cannot be empty"
+            )
 
         if DB_CON.check_whether_user_email_exists(user_email):  # type: ignore
             return render_template("signup.html", signup_error="Email already exists")
@@ -102,7 +106,9 @@ def signup_page():
         session["user_unique_id"] = user_unique_id
         session["user_name"] = user_name
 
-        DB_CON.user_signup_with_user_email(user_unique_id, user_name, user_email, user_password)  # type: ignore
+        DB_CON.user_signup_with_user_email(
+            user_unique_id, user_name, user_email, user_password
+        )  # type: ignore
         return redirect("/contacts")
 
 
@@ -118,7 +124,9 @@ def contacts_page():
             return redirect("/login")
 
         all_contacts = DB_CON.get_all_contacts_of_user(user_unique_id)
-        return render_template("contacts.html", user_name=user_name, all_contacts=all_contacts)
+        return render_template(
+            "contacts.html", user_name=user_name, all_contacts=all_contacts
+        )
 
     elif request.method == "POST":
         contact_name = request.form.get("name")
@@ -129,7 +137,9 @@ def contacts_page():
 
         contact_unique_id = token_hex(5)
         contact_number = int(contact_number)  # type: ignore
-        DB_CON.user_save_contact(contact_unique_id, contact_name, contact_number, user_unique_id)  # type: ignore
+        DB_CON.user_save_contact(
+            contact_unique_id, contact_name, contact_number, user_unique_id
+        )  # type: ignore
 
         return redirect("/contacts")
 
@@ -189,7 +199,6 @@ def delete_data():
 #     """
 #     return hashlib.md5((user_name + user_email + user_password).encode()).hexdigest()
 
-
 # def get_hash_from_user_password(user_password: str) -> str:
 #     """
 #     Get the hash from the user_password
@@ -201,7 +210,6 @@ def delete_data():
 #         str: The hash of the user_password
 #     """
 #     return hashlib.sha256(user_password.encode()).hexdigest()
-
 
 print("[+] Connecting to the database")
 

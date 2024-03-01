@@ -1,9 +1,9 @@
 """The database connection class for the contacts database"""
 
 from datetime import date
+from os import environ
 
 from dotenv import load_dotenv
-from os import environ
 from sqlalchemy import create_engine, exc, text
 
 # Importing all environment variables
@@ -68,8 +68,12 @@ class ConnectionClass:
         """Returns the user data if the user exists in the database"""
 
         with self.__engine.connect() as conn:
-            stmt = text("select lid, lname, lemail from login where lemail=:email and lpassword=:password")
-            result = conn.execute(stmt, {"email": email, "password": password}).fetchone()
+            stmt = text(
+                "select lid, lname, lemail from login where lemail=:email and lpassword=:password"
+            )
+            result = conn.execute(
+                stmt, {"email": email, "password": password}
+            ).fetchone()
 
         return result  # type: ignore
 
@@ -82,12 +86,16 @@ class ConnectionClass:
 
         return bool(result)
 
-    def user_signup_with_user_email(self, unique_id: str, name: str, email: str, password: str) -> bool:
+    def user_signup_with_user_email(
+        self, unique_id: str, name: str, email: str, password: str
+    ) -> bool:
         """Function to signup the user with the email and password"""
 
         try:
             with self.__engine.connect() as conn:
-                stmt = text("insert into login values (:lid, :lname, :lemail, :lpassword)")
+                stmt = text(
+                    "insert into login values (:lid, :lname, :lemail, :lpassword)"
+                )
                 conn.execute(
                     stmt,
                     {
@@ -103,12 +111,16 @@ class ConnectionClass:
         except exc.SQLAlchemyError:
             return False
 
-    def user_save_contact(self, contact_id: str, name: str, number: int, user_id: str) -> None:
+    def user_save_contact(
+        self, contact_id: str, name: str, number: int, user_id: str
+    ) -> None:
         """
         Put name and number into the database
         """
         with self.__engine.connect() as conn:
-            stmt = text("insert into contact values (:cid, :cname, :cnumber, :lid, :date)")
+            stmt = text(
+                "insert into contact values (:cid, :cname, :cnumber, :lid, :date)"
+            )
             conn.execute(
                 stmt,
                 {
@@ -177,7 +189,9 @@ class ConnectionClass:
             contact_name (str): The name of the contact
         """
         with self.__engine.connect() as conn:
-            stmt = text("update contact set cname=:cname, cnumber=:cnumber where cid=:cid")
+            stmt = text(
+                "update contact set cname=:cname, cnumber=:cnumber where cid=:cid"
+            )
             conn.execute(
                 stmt,
                 {
