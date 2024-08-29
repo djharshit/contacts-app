@@ -1,14 +1,20 @@
-FROM python
+FROM python:3.11-alpine
 
-LABEL maintainer="Harshit M"
 LABEL org.opencontainers.image.source="https://github.com/djharshit/contacts-app"
+LABEL maintainer="Harshit M"
 
-WORKDIR /home/app/
+ARG PORT=${PORT}
+
+WORKDIR /home/app
 
 COPY . .
 
-RUN pip install -r requirements.txt
+RUN wget -q -t3 'https://packages.doppler.com/public/cli/rsa.8004D9FF50437357.key' -O /etc/apk/keys/cli@doppler-8004D9FF50437357.rsa.pub && \
+    echo 'https://packages.doppler.com/public/cli/alpine/any-version/main' | tee -a /etc/apk/repositories && \
+    apk add --no-cache doppler
 
-EXPOSE 5000
+RUN chmod +x install.sh && chmod +x run.sh && ./install.sh
 
-CMD [ "gunicorn", "-b", "0.0.0.0:5000", "server:app" ]
+EXPOSE ${PORT}
+
+CMD [ "./run.sh" ]

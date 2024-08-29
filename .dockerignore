@@ -1,6 +1,11 @@
 __pycache__/
 .venv/
 .git/
-.env
+.github/
 .gitignore
+.env
+deepsource.toml
 database.sql
+Procfile
+README.md
+LICENSE
