@@ -13,7 +13,7 @@ from sqlalchemy import Row
 from db_con import ConnectionClass
 
 sentry_sdk.init(environ.get("SENTRY_DSN"))
-PORT = int(environ.get("PORT", 0))
+PORT = int(environ.get("PORT", 5000))
 
 app = Flask(__name__)
 app.secret_key = environ.get("SECRET_KEY")
@@ -75,6 +75,8 @@ def login_page():
 
         return redirect("/contacts")
 
+    return render_template("login.html", login_error="")
+
 
 @app.route("/signup", methods=["GET", "POST"])  # type: ignore
 def signup_page():
@@ -119,6 +121,8 @@ def signup_page():
         )
         return redirect("/contacts")
 
+    return render_template("signup.html", signup_error="")
+
 
 @app.route("/contacts", methods=["GET", "POST"])  # type: ignore
 def contacts_page():
@@ -128,7 +132,7 @@ def contacts_page():
     user_name: str = session.get("user_name", "")
 
     if request.method == "GET":
-        if user_unique_id is None:
+        if not user_unique_id:
             return redirect("/login")
 
         all_contacts: Sequence[Row[Any]] = DB_CON.get_all_contacts_of_user(
@@ -151,6 +155,8 @@ def contacts_page():
         )
 
         return redirect("/contacts")
+
+    return render_template("contacts.html", user_name=user_name, all_contacts=[])
 
 
 @app.route("/logout")  # type: ignore
@@ -196,6 +202,8 @@ def update_contact_of_user():
         DB_CON.update_contact_of_user(contact_id, new_contact_name, new_contact_number)
 
         return redirect("/contacts")
+
+    return redirect("/contacts")
 
 
 @app.route("/delete", methods=["POST"])  # type: ignore
