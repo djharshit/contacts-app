@@ -1,20 +1,31 @@
-FROM python:3.11-alpine
+# Builder Image
+
+FROM python:3.12-alpine AS builder
+
+WORKDIR /app
+
+COPY . .
+
+RUN sh install.sh
+
+# Runner Image
+
+FROM python:3.12-alpine AS runnner
+
+COPY --from=builder /usr/local/lib/python3.12/site-packages/ /usr/local/lib/python3.12/site-packages/
+COPY --from=builder /usr/local/bin/ /usr/local/bin/
+COPY --from=builder /app /app
+
+WORKDIR /app
+
+RUN apk add --no-cache curl gnupg mariadb-connector-c-dev && \
+    (curl -Ls --tlsv1.2 --proto "=https" --retry 3 https://cli.doppler.com/install.sh || wget -t 3 -qO- https://cli.doppler.com/install.sh) | sh
 
 LABEL org.opencontainers.image.source="https://github.com/djharshit/contacts-app"
 LABEL maintainer="Harshit M"
 
 ARG PORT=5000
 
-WORKDIR /home/app
-
-COPY . .
-
-RUN wget -q -t3 'https://packages.doppler.com/public/cli/rsa.8004D9FF50437357.key' -O /etc/apk/keys/cli@doppler-8004D9FF50437357.rsa.pub && \
-    echo 'https://packages.doppler.com/public/cli/alpine/any-version/main' | tee -a /etc/apk/repositories && \
-    apk add --no-cache doppler pkgconfig gcc musl-dev mariadb-connector-c-dev
-
-RUN chmod +x install.sh && chmod +x run.sh && ./install.sh
-
 EXPOSE ${PORT}
 
-CMD [ "./run.sh" ]
+CMD [ "sh", "run.sh" ]

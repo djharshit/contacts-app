@@ -58,6 +58,14 @@ class ConnectionClass:
 
         return bool(self.__engine)
 
+    def close_connection(self) -> None:
+        """Close the connection to the database"""
+
+        if self.__engine is not None:
+            self.__engine.dispose()
+
+            print("[+] Connection to the database closed")
+
     def user_login_with_user_email(
         self, email: str, password: str
     ) -> Optional[Row[Any]]:

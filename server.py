@@ -2,8 +2,10 @@
 Simple contacts web app using flask and sqlite3 database to store the contacts
 """
 
+from atexit import register
 from os import environ
 from secrets import token_hex
+from sys import exit as sys_exit
 from typing import Any, Optional, Sequence
 
 import sentry_sdk
@@ -239,6 +241,10 @@ def delete_data():
 print("[+] Connecting to the database")
 
 DB_CON = ConnectionClass()
+
+# Handling the exit signals for the database connection to close
+register(DB_CON.close_connection)
+
 if DB_CON.check_the_connection():
     print("[+] Connected to the database")
 
@@ -247,3 +253,4 @@ if DB_CON.check_the_connection():
 
 else:
     print("[+] Error connecting to the database")
+    sys_exit(1)

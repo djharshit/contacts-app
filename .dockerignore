@@ -2,8 +2,14 @@ __pycache__/
 .venv/
 .git/
 .github/
+
 .gitignore
 .env
+
+*.pyc
+*.pyo
+*.pyd
+
 deepsource.toml
 database.sql
 Procfile
