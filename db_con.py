@@ -42,9 +42,7 @@ class ConnectionClass:
             )
 
             # Database pool warmup successfully
-            result: Optional[Match[str]] = search(
-                r"Pool size: (\d+)", self.__engine.pool.status()
-            )
+            result: Optional[Match[str]] = search(r"Pool size: (\d+)", self.__engine.pool.status())
             if result is not None:
                 for _ in range(int(result.group(1))):
                     self.__engine.connect().close()
@@ -58,19 +56,21 @@ class ConnectionClass:
 
         return bool(self.__engine)
 
-    def user_login_with_user_email(
-        self, email: str, password: str
-    ) -> Optional[Row[Any]]:
+    def close_connection(self) -> None:
+        """Close the connection to the database"""
+
+        if self.__engine is not None:
+            self.__engine.dispose()
+
+            print("[+] Connection to the database closed")
+
+    def user_login_with_user_email(self, email: str, password: str) -> Optional[Row[Any]]:
         """Returns the user data if the user exists in the database"""
 
         if self.__engine is not None:
             with self.__engine.connect() as conn:
-                stmt: TextClause = text(
-                    "select lid, lname, lemail from login where lemail=:email and lpassword=:password"
-                )
-                return conn.execute(
-                    stmt, {"email": email, "password": password}
-                ).fetchone()
+                stmt: TextClause = text("select lid, lname, lemail from login where lemail=:email and lpassword=:password")
+                return conn.execute(stmt, {"email": email, "password": password}).fetchone()
 
         return None
 
@@ -84,17 +84,13 @@ class ConnectionClass:
 
         return False
 
-    def user_signup_with_user_email(
-        self, unique_id: str, name: str, email: str, password: str
-    ) -> bool:
+    def user_signup_with_user_email(self, unique_id: str, name: str, email: str, password: str) -> bool:
         """Function to signup the user with the email and password"""
 
         try:
             if self.__engine is not None:
                 with self.__engine.connect() as conn:
-                    stmt: TextClause = text(
-                        "insert into login values (:lid, :lname, :lemail, :lpassword)"
-                    )
+                    stmt: TextClause = text("insert into login values (:lid, :lname, :lemail, :lpassword)")
                     conn.execute(
                         stmt,
                         {
@@ -112,17 +108,13 @@ class ConnectionClass:
         except SQLAlchemyError:
             return False
 
-    def user_save_contact(
-        self, contact_id: str, name: str, number: int, user_id: str
-    ) -> None:
+    def user_save_contact(self, contact_id: str, name: str, number: int, user_id: str) -> None:
         """
         Put name and number into the database
         """
         if self.__engine is not None:
             with self.__engine.connect() as conn:
-                stmt: TextClause = text(
-                    "insert into contact values (:cid, :cname, :cnumber, :lid, :date)"
-                )
+                stmt: TextClause = text("insert into contact values (:cid, :cname, :cnumber, :lid, :date)")
                 conn.execute(
                     stmt,
                     {
@@ -144,9 +136,7 @@ class ConnectionClass:
         """
         if self.__engine is not None:
             with self.__engine.connect() as conn:
-                stmt: TextClause = text(
-                    "select cid, cname, cnumber from contact where lid=:lid"
-                )
+                stmt: TextClause = text("select cid, cname, cnumber from contact where lid=:lid")
                 return conn.execute(stmt, {"lid": user_id}).fetchall()
 
         return []
@@ -176,9 +166,7 @@ class ConnectionClass:
         """
         if self.__engine is not None:
             with self.__engine.connect() as conn:
-                stmt: TextClause = text(
-                    "select cname, cnumber from contact where cid=:cid"
-                )
+                stmt: TextClause = text("select cname, cnumber from contact where cid=:cid")
                 return conn.execute(stmt, {"cid": contact_id}).fetchone()
 
         return None
@@ -200,9 +188,7 @@ class ConnectionClass:
 
         if self.__engine is not None:
             with self.__engine.connect() as conn:
-                stmt: TextClause = text(
-                    "update contact set cname=:cname, cnumber=:cnumber where cid=:cid"
-                )
+                stmt: TextClause = text("update contact set cname=:cname, cnumber=:cnumber where cid=:cid")
                 conn.execute(
                     stmt,
                     {
