@@ -21,14 +21,14 @@ check_distribution () {
 # Install all the dependencies and packages required to run the application on a fresh Linux machine
 install_package () {
     if [ "$DISTRO" == "debian" ]; then
-        sudo apt-get update
-        sudo apt-get install -y --no-install-recommends apt-transport-https ca-certificates curl gnupg
+        apt-get update
+        apt-get install -y --no-install-recommends apt-transport-https ca-certificates curl gnupg
 
-        sudo curl -sLf --retry 3 --tlsv1.2 --proto "=https" 'https://packages.doppler.com/public/cli/gpg.DE2A7741A397C129.key' | sudo apt-key add -
-        echo "deb https://packages.doppler.com/public/cli/deb/debian any-version main" | sudo tee /etc/apt/sources.list.d/doppler-cli.list
+        curl -sLf --retry 3 --tlsv1.2 --proto "=https" 'https://packages.doppler.com/public/cli/gpg.DE2A7741A397C129.key' | apt-key add -
+        echo "deb https://packages.doppler.com/public/cli/deb/debian any-version main" | tee /etc/apt/sources.list.d/doppler-cli.list
 
-        sudo apt-get update && sudo apt-get install -y doppler python3-virtualenv
-        sudo apt-get install -y --no-install-recommends pkg-config gcc musl-dev libmariadb-dev
+        apt-get update && apt-get install -y doppler python3-virtualenv
+        apt-get install -y --no-install-recommends pkg-config gcc musl-dev libmariadb-dev
 
     elif [ "$DISTRO" == "alpine" ]; then
         apk cache clean
