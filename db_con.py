@@ -64,7 +64,9 @@ class ConnectionClass:
 
             print("[+] Connection to the database closed")
 
-    def user_login_with_user_email(self, email: str, password: str) -> Optional[Row[Any]]:
+    def user_login_with_user_email(
+        self, email: str, password: str
+    ) -> Optional[Row[Any]]:
         """Returns the user data if the user exists in the database"""
 
         if self.__engine is not None:
